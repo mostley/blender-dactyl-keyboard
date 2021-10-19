@@ -1,0 +1,69 @@
+{
+  "keys": {
+    "columns": 6,
+    "rows": 4,
+    "thumb-count": "six",
+    "last-row": "zero",
+    "switch-type": "mx-snap-in",
+    "inner-column": "normie",
+    "hide-last-pinky": false
+  },
+  "curve": {
+    "alpha": 7,
+    "pinky-alpha": 7,
+    "beta": 25,
+    "centercol": 4,
+    "tenting": 12,
+    "rotate-x": 180
+  },
+  "connector": {
+    "external": true,
+    "type": "trrs",
+    "micro-usb": false
+  },
+  "form": {
+    "screw-inserts": false,
+    "hotswap": false,
+    "wire-post": false,
+    "wide-pinky": false,
+    "column-offset": 3.0,
+    "height-offset": 5,
+    "wall-thickness": 3.0,
+    "web-thickness": 5.0,
+    "stagger": true,
+    "stagger-index-y": 0.0,
+    "stagger-ring-z": 0.0,
+    "stagger-middle-z": -6.5,
+    "stagger-middle-y": 2.8,
+    "stagger-index-z": 0.0,
+    "stagger-ring-y": 0.0,
+    "stagger-pinky-z": 6.0,
+    "stagger-pinky-y": -13.0,
+    "custom-thumb-cluster": false,
+    "thumb-cluster-offset-x": 4.5,
+    "thumb-cluster-offset-z": 2.0,
+    "thumb-cluster-offset-y": -1.0,
+    "thumb-middle-left-tenting-y": 69.0,
+    "thumb-top-left-offset-y": -16.0,
+    "thumb-top-right-tenting-y": 69.0,
+    "thumb-top-left-tenting-z": 69.0,
+    "thumb-top-left-tenting-x": 69.0,
+    "thumb-middle-left-offset-x": -53.0,
+    "thumb-middle-left-offset-z": -12.0,
+    "thumb-middle-left-offset-y": -26.0,
+    "thumb-middle-left-tenting-x": 69.0,
+    "thumb-top-right-offset-x": -15.0,
+    "thumb-top-right-tenting-z": 69.0,
+    "thumb-top-right-tenting-x": 69.0,
+    "thumb-middle-left-tenting-z": 69.0,
+    "thumb-top-left-tenting-y": 69.0,
+    "thumb-top-right-offset-y": -10.0,
+    "thumb-top-right-offset-z": -5.0,
+    "thumb-top-left-offset-x": -35.0,
+    "thumb-top-left-offset-z": -2.0
+  },
+  "misc": {
+    "keycaps": false,
+    "right-side": false
+  }
+}

@@ -129,13 +129,14 @@
   (let [use-wide-pinky? (get c :configuration-use-wide-pinky?)
         nrows           (get c :configuration-nrows 5)
         ncols           (get c :configuration-ncols)
+        column-offset   (get c :configuration-column-offset)
         lastrow         (flastrow nrows)
         lastcol         (flastcol ncols)]
     (if (and use-wide-pinky?
              (not= row lastrow)
              (= col lastcol))
       5.5
-      0)))
+      (* column-offset col))))
 
 ; this is the helper function to 'place' the keys on the defined curve
 ; of the board.
@@ -233,9 +234,9 @@
                               :mx true
                               :mx-snap-in true
                               false) #_(get c :configuration-create-side-nub?)
-      nub-height           (case switch-type
-                              :mx-snap-in 0.75
-                              0) 
+        nub-height           (case switch-type
+                               :mx-snap-in 0.75
+                               0)
         use-alps?           (case switch-type
                               :alps true
                               false) #_(get c :configuration-use-alps?)
@@ -324,22 +325,20 @@
         choc-socket-holder-height 5.5
         choc-socket-holder-thickness 1
         choc-hotswap-socket-holder (difference
-                                (->> (cube 10 7 choc-socket-holder-height)
-                                     (translate [2 5 hotswap-base-z-offset]))
-                                (->> (cube 5 7 choc-socket-holder-height)
-                                     (translate [-0.6 6 (+ hotswap-base-z-offset choc-socket-holder-thickness)]))
-                                (->> (cube 7 7 choc-socket-holder-height)
-                                     (translate [5 4 (+ hotswap-base-z-offset choc-socket-holder-thickness)]))
-                                )
+                                    (->> (cube 10 7 choc-socket-holder-height)
+                                         (translate [2 5 hotswap-base-z-offset]))
+                                    (->> (cube 5 7 choc-socket-holder-height)
+                                         (translate [-0.6 6 (+ hotswap-base-z-offset choc-socket-holder-thickness)]))
+                                    (->> (cube 7 7 choc-socket-holder-height)
+                                         (translate [5 4 (+ hotswap-base-z-offset choc-socket-holder-thickness)])))
         hotswap-holder      (union (if use-choc? choc-hotswap-socket-holder ())
-                                (difference swap-holder 
-                                        main-axis-hole
-                                        (union plus-hole plus-hole-mirrored)
-                                        (union minus-hole minus-hole-mirrored)
-                                        friction-hole-left
-                                        friction-hole-right
-                                        hotswap-base-shape)
-                            )]
+                                   (difference swap-holder
+                                               main-axis-hole
+                                               (union plus-hole plus-hole-mirrored)
+                                               (union minus-hole minus-hole-mirrored)
+                                               friction-hole-left
+                                               friction-hole-right
+                                               hotswap-base-shape))]
     (difference (union plate-half
                        (->> plate-half
                             (mirror [1 0 0])
