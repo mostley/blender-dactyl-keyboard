@@ -135,6 +135,7 @@
         stagger-pinky                     [0 param-pinky-y param-pinky-z]
 
         param-show-keycaps                (parse-bool (get p "misc.keycaps"))
+        param-show-finger-points          (parse-bool (get p "misc.finger-points"))
         is-right?                         (parse-bool (get p "misc.right-side"))
 
         param-generate-plate              (get p "generate-plate")
@@ -195,6 +196,7 @@
                                            :configuration-web-thickness               param-web-thickness
                                            :configuration-wall-thickness              param-wall-thickness
                                            :configuration-show-caps?                  param-show-keycaps
+                                           :configuration-show-finger-points?         param-show-finger-points
                                            :configuration-use-wide-pinky?             param-wide-pinky
                                            :configuration-use-wire-post?              param-wire-post
                                            :configuration-use-screw-inserts?          param-screw-inserts
@@ -221,6 +223,12 @@
 
 (defn generate-lightcycle [req]
   (let [p                         (:form-params req)
+        param-finger-thumb        (parse-float (get p "fingers.Thumb"))
+        param-finger-pointer      (parse-float (get p "fingers.Index"))
+        param-finger-middle       (parse-float (get p "fingers.Middle"))
+        param-finger-ring         (parse-float (get p "fingers.Ring"))
+        param-finger-pinky        (parse-float (get p "fingers.Pinky"))
+
         param-ncols               (parse-int (get p "keys.columns"))
         param-use-numrow?         (parse-bool (get p "keys.num-row"))
         param-use-lastrow?        (parse-bool (get p "keys.last-row"))
@@ -275,6 +283,11 @@
                                    :configuration-hide-last-pinky?     param-hide-last-pinky
                                    :configuration-use-wide-pinky?      param-use-wide-pinky
                                    :configuration-switch-type          param-switch-type
+                                   :configuration-finger-points        {:Thumb   param-finger-thumb
+                                                                        :Index   param-finger-pointer
+                                                                        :Middle  param-finger-middle
+                                                                        :Ring    param-finger-ring
+                                                                        :Pinky   param-finger-pinky}
 
                                    :configuration-alpha                (if generate-json? param-alpha (/ pi param-alpha))
                                    :configuration-beta                 (if generate-json? param-beta (/ pi param-beta))

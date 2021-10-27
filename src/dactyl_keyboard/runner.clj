@@ -1,7 +1,7 @@
 (ns dactyl-keyboard.runner
   (:require [clojure.data.json :as json]
             [scad-clj.model :refer [pi]]
-            [clojure-watch.core :refer [start-watch]]
+            ; [clojure-watch.core :refer [start-watch]]
             [dactyl-keyboard.generator :as g])
   (:gen-class))
 
@@ -10,6 +10,8 @@
         curve          (get body :curve)
         connector      (get body :connector)
         form           (get body :form)
+        fingers        (get body :fingers)
+
         index-y        (get form :stagger-index-y 0)
         index-z        (get form :stagger-index-z 0)
         middle-y       (get form :stagger-middle-y 2.8)
@@ -79,17 +81,28 @@
                         :configuration-wall-thickness              (get form :wall-thickness 3.0)
                         :configuration-column-offset               (get form :column-offset 0.0)
 
+                        :configuration-finger-points               {:Thumb   (get fingers :Thumb)
+                                                                    :Index   (get fingers :Index)
+                                                                    :Middle  (get fingers :Middle)
+                                                                    :Ring    (get fingers :Ring)
+                                                                    :Pinky   (get fingers :Pinky)}
+
                         :configuration-show-caps?                  (get misc :keycaps false)
+                        :configuration-show-finger-points?         (get misc :finger-points)
                         :configuration-plate-projection?           (not (get misc :case true))}
         generated-scad (g/generate-case-dm c (get misc :right-side true))]
     generated-scad))
 
-(start-watch [{:path "."
-               :event-types [:create :modify :delete]
-               :bootstrap (fn [path] (println "Starting to watch " path))
-               :callback (fn [event filename] (if (= filename "./input.json")
-                                                [(println "json updated" filename) (spit "result.scad" (api-generate-manuform
-                                                                                                        (json/read-str (slurp "./input.json") :key-fn keyword)))]
-                                                ""))}])
+(defn execute []
+  (spit "result.scad" (api-generate-manuform
+                       (json/read-str (slurp "./input.json") :key-fn keyword))))
+
+(execute)
+; (start-watch [{:path "."
+;                :event-types [:create :modify :delete]
+;                :bootstrap (fn [path] (println "Starting to watch " path))
+;                :callback (fn [event filename] (if (= filename "./input.json")
+;                                                 [(println "json updated" filename) (execute)]
+;                                                 ""))}])
 
 ; start the watch (Thread/sleep 20000) ; manipulate files on the path (stop-watch)) ; stop the watch

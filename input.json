@@ -1,4 +1,11 @@
 {
+  "fingers": {
+    "Thumb": [-51, 100, 34],
+    "Index": [-28, 134, 34],
+    "Middle": [-9, 144.5, 31],
+    "Ring": [17, 145, 33],
+    "Pinky": [42, 121, 25.5]
+  },
   "keys": {
     "columns": 6,
     "rows": 4,
@@ -63,7 +70,8 @@
     "thumb-top-left-offset-z": -2.0
   },
   "misc": {
+    "finger-points": true,
     "keycaps": false,
-    "right-side": false
+    "right-side": true
   }
 }
