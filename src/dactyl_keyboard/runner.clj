@@ -44,6 +44,8 @@
                         :configuration-connector-type              (keyword (get connector :type "none"))
                         :configuration-use-promicro-usb-hole?      (get connector :micro-usb false)
 
+                        :configuration-wrist-rest-height           (get form :wrist-rest-height)
+
                         :configuration-thumb-cluster-offset-x      (get form :thumb-cluster-offset-x 6)
                         :configuration-thumb-cluster-offset-y      (get form :thumb-cluster-offset-y -3)
                         :configuration-thumb-cluster-offset-z      (get form :thumb-cluster-offset-z 7)

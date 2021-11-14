@@ -18,8 +18,8 @@
   "curve": {
     "alpha": 7,
     "pinky-alpha": 7,
-    "beta": 25,
-    "centercol": 4,
+    "beta": 180,
+    "centercol": 1,
     "tenting": 12,
     "rotate-x": 180
   },
@@ -29,6 +29,7 @@
     "micro-usb": false
   },
   "form": {
+    "wrist-rest-height": 20,
     "screw-inserts": false,
     "hotswap": false,
     "wire-post": false,

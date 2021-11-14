@@ -49,6 +49,28 @@
 ;; placement function ;;
 ;;;;;;;;;;;;;;;;;
 
+(defn finger-point-for-col [c column]
+  (let [index-finger       (get (get c :configuration-finger-points) :Index)
+        column-finger      (case column
+                             0 :Index
+                             1 :Index
+                             2 :Middle
+                             3 :Ring
+                             4 :Pinky
+                             5 :Pinky
+                             -1)
+        finger-point (cond
+                       (<= 1 column 4) (get (get c :configuration-finger-points) column-finger)
+                       :else [0 0 0])]
+    [0 0 0]))
+    ; (cond
+    ;   (= column 0) [0 (-  (get finger-point 1) (get index-finger 1)) 0]
+    ;   (<= 1 column 4) [0;(get finger-point 0)
+    ;                    (-  (get finger-point 1) (get index-finger 1))
+    ;                    0];(get finger-point 2)]
+    ;   (= column 5) [0 (-  (get finger-point 1) (get index-finger 1)) 0]
+    ;   :else [0 0 0])))
+
 (defn dm-column-offset
   "Determines how much 'stagger' the columns are for dm.
    0 = inner index finger's column.
@@ -59,19 +81,21 @@
    [x y z] means that it will be staggered by 'x'mm in X axis (left/right),
    'y'mm in Y axis (front/back), and 'z'mm in Z axis (up/down). "
   [c column]
-  (let [stagger?       (get c :configuration-stagger?)
-        stagger-index  (get c :configuration-stagger-index)
-        stagger-middle (get c :configuration-stagger-middle)
-        stagger-ring   (get c :configuration-stagger-ring)
-        stagger-pinky  (get c :configuration-stagger-pinky)]
-    (if stagger?
-      (cond (= column 2) stagger-middle
-            (= column 3) stagger-ring
-            (>= column 4) stagger-pinky
-            :else stagger-index)
-      (cond (= column 2)  [0   0    -6.5]
-            (>= column 4) [0   0     6]
-            :else         [0   0     0]))))
+  (let [; stagger?       (get c :configuration-stagger?)
+        ; stagger-index  (get c :configuration-stagger-index)
+        ; stagger-middle (get c :configuration-stagger-middle)
+        ; stagger-ring   (get c :configuration-stagger-ring)
+        ; stagger-pinky  (get c :configuration-stagger-pinky)
+        finger-point   (finger-point-for-col c column)]
+    finger-point))
+    ; (if stagger?
+    ;   (cond (= column 2) stagger-middle
+    ;         (= column 3) stagger-ring
+    ;         (>= column 4) stagger-pinky
+    ;         :else stagger-index)
+    ;   (cond (= column 2)  [0   0    -6.5]
+    ;         (>= column 4) [0   0     6]
+    ;         :else         [0   0     0]))))
 
 (defn fcenterrow
   "Determines where should the center (bottom-most point in the row's curve)
@@ -154,7 +178,6 @@
         tenting-angle     (get c :configuration-tenting-angle)
         switch-type       (get c :configuration-switch-type)
         keyboard-z-offset (get c :configuration-z-offset)
-        web-thickness     (get c :configuration-web-thickness)
         rotate-x-angle    (get c :configuration-rotate-x-angle)
         column-angle      (* beta (- centercol column))
         placed-shape      (->> shape
@@ -244,7 +267,6 @@
                               :choc true
                               false)
         use-hotswap?        (get c :configuration-use-hotswap?)
-        is-right?           (get c :is-right?)
         plate-projection?   (get c :configuration-plate-projection? false)
         fill-in             (translate [0 0 (/ plate-thickness 2)] (cube alps-width alps-height plate-thickness))
         holder-thickness    1.65

@@ -1586,47 +1586,47 @@
         show-finger-points?    (get c :configuration-show-finger-points?)
         index-finger           (get (get c :configuration-finger-points) :Index)
         use-external-holder?   (get c :configuration-use-external-holder?)
-        use-promicro-usb-hole? (get c :configuration-use-promicro-usb-hole?)
         use-screw-inserts?     (get c :configuration-use-screw-inserts?)
         connector-type         (get c :configuration-connector-type)
         use-wire-post?         (get c :configuration-use-wire-post?)]
     (union
      (if show-finger-points? (finger-points c) ())
-     (translate [0 (get index-finger 1) 0] (difference
-                                            (union
-                                             (if show-caps? (caps c) ())
-                                             (if show-caps? (thumbcaps c) ())
-                                             (if use-wire-post? (wire-posts c) ())
-                                             (key-holes c)
-                                             (thumb c)
-                                             (connectors c)
-                                             (thumb-connectors c)
-                                             (difference
-                                              (union (case connector-type
-                                                       :rj9 (difference (case-walls c)
-                                                                        (rj9-space frj9-start c))
-                                                       (case-walls c))
-                                                     (if use-screw-inserts? (screw-insert-outers screw-placement c) ())
-                                                     (case connector-type
-                                                       :trrs (union (pro-micro-holder c)
-                                                                    (trrs-usb-holder-holder c)
-                                                                    (trrs-holder c))
-                                                       :rj9 (union (usb-holder fusb-holder-position c)
-                                                                   (rj9-holder frj9-start c))
-                                                       ()))
-                                              (if use-screw-inserts? (screw-insert-holes screw-placement c) ())
-                                              (if-not use-external-holder?
-                                                (case connector-type
-                                                  :trrs (union (trrs-holder-hole c)
-                                                               (trrs-usb-holder-space c)
-                                                               (trrs-usb-jack c))
-                                                  :rj9 (usb-holder-hole fusb-holder-position c)
-                                                  ())
-                                                (external-holder-space c))))
+     (translate [0 (get index-finger 1) 0]
+                (difference
+                 (union
+                  (if show-caps? (caps c) ())
+                  (if show-caps? (thumbcaps c) ())
+                  (if use-wire-post? (wire-posts c) ())
+                  (key-holes c)
+                  (thumb c)
+                  (connectors c)
+                  (thumb-connectors c)
+                  (difference
+                   (union (case connector-type
+                            :rj9 (difference (case-walls c)
+                                             (rj9-space frj9-start c))
+                            (case-walls c))
+                          (if use-screw-inserts? (screw-insert-outers screw-placement c) ())
+                          (case connector-type
+                            :trrs (union (pro-micro-holder c)
+                                         (trrs-usb-holder-holder c)
+                                         (trrs-holder c))
+                            :rj9 (union (usb-holder fusb-holder-position c)
+                                        (rj9-holder frj9-start c))
+                            ()))
+                   (if use-screw-inserts? (screw-insert-holes screw-placement c) ())
+                   (if-not use-external-holder?
+                     (case connector-type
+                       :trrs (union (trrs-holder-hole c)
+                                    (trrs-usb-holder-space c)
+                                    (trrs-usb-jack c))
+                       :rj9 (usb-holder-hole fusb-holder-position c)
+                       ())
+                     (external-holder-space c))))
                         ;; used to flatten the bottom of the plate
                         ;; removes extra angles
                         ;; makes the rendering surprisingly slow
-                                            (translate [0 0 -60] (cube 350 350 120)))))))
+                 (translate [0 0 -60] (cube 350 350 120)))))))
 
 (defn model-left [c]
   (mirror [-1 0 0] (model-right c)))
