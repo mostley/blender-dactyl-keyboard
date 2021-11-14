@@ -50,26 +50,33 @@
 ;;;;;;;;;;;;;;;;;
 
 (defn finger-point-for-col [c column]
-  (let [index-finger       (get (get c :configuration-finger-points) :Index)
-        column-finger      (case column
-                             0 :Index
-                             1 :Index
-                             2 :Middle
-                             3 :Ring
-                             4 :Pinky
-                             5 :Pinky
-                             -1)
-        finger-point (cond
-                       (<= 1 column 4) (get (get c :configuration-finger-points) column-finger)
-                       :else [0 0 0])]
-    [0 0 0]))
-    ; (cond
-    ;   (= column 0) [0 (-  (get finger-point 1) (get index-finger 1)) 0]
-    ;   (<= 1 column 4) [0;(get finger-point 0)
-    ;                    (-  (get finger-point 1) (get index-finger 1))
-    ;                    0];(get finger-point 2)]
-    ;   (= column 5) [0 (-  (get finger-point 1) (get index-finger 1)) 0]
-    ;   :else [0 0 0])))
+  (let [finger-points            (get c :configuration-finger-points)
+        column-offset            (get c :configuration-column-offset)
+        index-finger             (get finger-points :Index)
+        index-finger-x           (get index-finger 0)
+        index-finger-y           (get index-finger 1)
+        index-finger-z           (get index-finger 2)
+        column-finger            (case column
+                                   0   :Index
+                                   0.5 :Index
+                                   1   :Index
+                                   2   :Middle
+                                   3   :Ring
+                                   4   :Pinky
+                                   5   :Pinky
+                                   -1)
+        finger-point             (get finger-points column-finger)
+        finger-point-x           (- (get finger-point 0) index-finger-x)
+        finger-point-y           (- (get finger-point 1) index-finger-y)
+        finger-point-z           (- (get finger-point 2) index-finger-z)
+        finger-point-x-mount     (- finger-point-x (* (- column 1) (+ mount-width 2.5 column-offset)))
+        finger-point-x-pinky     (+ finger-point-x-mount (* (- column 4) (+ mount-width 2.5 column-offset)))]
+    (cond
+      (= column-finger :Index) (cond
+                                 (= column 0) [column-offset 0 0]
+                                 :else        [0 0 0])
+      (> column 4) [(- finger-point-x-pinky column-offset) finger-point-y finger-point-z]
+      :else [finger-point-x-mount finger-point-y finger-point-z])))
 
 (defn dm-column-offset
   "Determines how much 'stagger' the columns are for dm.
@@ -169,33 +176,39 @@
    and rotated in xyz coordinate based on its position (row and column).
    It is the implementation detail of `key-place`."
   [c translate-fn rotate-x-fn rotate-y-fn column row shape]
-  (let [original-alpha    (get c :configuration-alpha)
-        pinky-alpha       (get c :configuration-pinky-alpha original-alpha)
-        alpha             (if (>= column 4) pinky-alpha original-alpha)
-        beta              (get c :configuration-beta)
-        centercol         (get c :configuration-centercol 2)
-        centerrow         (fcenterrow (get c :configuration-nrows 5))
-        tenting-angle     (get c :configuration-tenting-angle)
-        switch-type       (get c :configuration-switch-type)
-        keyboard-z-offset (get c :configuration-z-offset)
-        rotate-x-angle    (get c :configuration-rotate-x-angle)
-        column-angle      (* beta (- centercol column))
-        placed-shape      (->> shape
-                               (translate-fn [(offset-for-column c
-                                                                 column
-                                                                 row)
-                                              0
-                                              (- (frow-radius alpha switch-type))])
-                               (rotate-x-fn  (* alpha (- centerrow row)))
-                               (translate-fn [0 0 (frow-radius alpha switch-type)])
-                               (translate-fn [0 0 (- (fcolumn-radius c beta switch-type))])
-                               (rotate-y-fn  column-angle)
-                               (translate-fn [0 0 (fcolumn-radius c beta switch-type)])
-                               (translate-fn (dm-column-offset c column)))]
+  (let [original-alpha        (get c :configuration-alpha)
+        pinky-alpha           (get c :configuration-pinky-alpha original-alpha)
+        index-finger-x        (get (get (get c :configuration-finger-points) :Index) 0)
+        index-finger-z        (get (get (get c :configuration-finger-points) :Index) 2)
+        alpha                 (if (>= column 4) pinky-alpha original-alpha)
+        beta                  (get c :configuration-beta)
+        centercol             (get c :configuration-centercol 2)
+        centerrow             (fcenterrow (get c :configuration-nrows 5))
+        tenting-angle         (get c :configuration-tenting-angle)
+        switch-type           (get c :configuration-switch-type)
+        keyboard-z-offset     (get c :configuration-z-offset)
+        rotate-x-angle        (get c :configuration-rotate-x-angle)
+        cap-height            (get c :configuration-cap-height)
+        column-offset         (get c :configuration-column-offset)
+        column-angle          (* beta (- centercol column))
+        index-finger-x-offset (- index-finger-x column-offset (+ mount-width 1.5))
+        placed-shape          (->> shape
+                                   (translate-fn [(offset-for-column c
+                                                                     column
+                                                                     row)
+                                                  0
+                                                  (- (frow-radius alpha switch-type))])
+                                   (rotate-x-fn  (* alpha (- centerrow row)))
+                                   (translate-fn [0 0 (frow-radius alpha switch-type)])
+                                   (translate-fn [0 0 (- (fcolumn-radius c beta switch-type))])
+                                   (rotate-y-fn  column-angle)
+                                   (translate-fn [0 0 (fcolumn-radius c beta switch-type)])
+                                   (translate-fn (dm-column-offset c column))
+                                   (translate-fn [index-finger-x-offset 0 0]))]
     (->> placed-shape
          (rotate-y-fn  tenting-angle)
          (rotate-x-fn  rotate-x-angle)
-         (translate-fn [0 0 keyboard-z-offset]))))
+         (translate-fn [0 0 (+ keyboard-z-offset (- index-finger-z cap-height))]))))
 
 (defn rotate-around-x [angle position]
   (mmul

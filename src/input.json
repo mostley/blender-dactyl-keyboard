@@ -1,26 +1,27 @@
 {
   "fingers": {
-    "Thumb": [-51, 100, 34],
-    "Index": [-28, 134, 34],
-    "Middle": [-9, 144.5, 31],
-    "Ring": [17, 145, 33],
-    "Pinky": [42, 121, 25.5]
+    "Thumb": [-58, 74, 35],
+    "Index": [-29, 120, 33],
+    "Middle": [-7, 132, 32],
+    "Ring": [21, 126.5, 32],
+    "Pinky": [43, 111, 34]
   },
   "keys": {
     "columns": 6,
     "rows": 4,
-    "thumb-count": "six",
+    "thumb-count": "five",
     "last-row": "zero",
     "switch-type": "mx-snap-in",
     "inner-column": "normie",
-    "hide-last-pinky": false
+    "hide-last-pinky": false,
+    "cap-height": 14
   },
   "curve": {
     "alpha": 7,
     "pinky-alpha": 7,
-    "beta": 180,
-    "centercol": 1,
-    "tenting": 12,
+    "beta": -80,
+    "centercol": 0,
+    "tenting": 500,
     "rotate-x": 180
   },
   "connector": {
@@ -35,7 +36,7 @@
     "wire-post": false,
     "wide-pinky": false,
     "column-offset": 3.0,
-    "height-offset": 5,
+    "height-offset": 3,
     "wall-thickness": 3.0,
     "web-thickness": 5.0,
     "stagger": true,
@@ -47,10 +48,10 @@
     "stagger-ring-y": 0.0,
     "stagger-pinky-z": 6.0,
     "stagger-pinky-y": -13.0,
+    "thumb-cluster-offset-x": 0,
+    "thumb-cluster-offset-y": 0.0,
+    "thumb-cluster-offset-z": -5.0,
     "custom-thumb-cluster": false,
-    "thumb-cluster-offset-x": 4.5,
-    "thumb-cluster-offset-z": 2.0,
-    "thumb-cluster-offset-y": -1.0,
     "thumb-middle-left-tenting-y": 69.0,
     "thumb-top-left-offset-y": -16.0,
     "thumb-top-right-tenting-y": 69.0,

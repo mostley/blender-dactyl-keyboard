@@ -1,7 +1,6 @@
 (ns dactyl-keyboard.runner
   (:require [clojure.data.json :as json]
             [scad-clj.model :refer [pi]]
-            ; [clojure-watch.core :refer [start-watch]]
             [dactyl-keyboard.generator :as g])
   (:gen-class))
 
@@ -32,6 +31,7 @@
                         :configuration-switch-type                 (keyword (get keys :switch-type "box"))
                         :configuration-inner-column                (keyword (get keys :inner-column "normie"))
                         :configuration-hide-last-pinky?            (get keys :hide-last-pinky false)
+                        :configuration-cap-height                  (get keys :cap-height 10)
 
                         :configuration-alpha                       (/ pi (get curve :alpha 12))
                         :configuration-pinky-alpha                 (/ pi (get curve :pinky-alpha 12))
@@ -95,16 +95,44 @@
         generated-scad (g/generate-case-dm c (get misc :right-side true))]
     generated-scad))
 
-(defn execute []
-  (spit "result.scad" (api-generate-manuform
-                       (json/read-str (slurp "./input.json") :key-fn keyword))))
+(spit "result.scad" (api-generate-manuform
+                     (json/read-str (slurp "./src/input.json") :key-fn keyword)))
 
-(execute)
-; (start-watch [{:path "."
-;                :event-types [:create :modify :delete]
-;                :bootstrap (fn [path] (println "Starting to watch " path))
-;                :callback (fn [event filename] (if (= filename "./input.json")
-;                                                 [(println "json updated" filename) (execute)]
-;                                                 ""))}])
+#_(spit "things/right.scad"
+        (write-scad (model-right c)))
 
-; start the watch (Thread/sleep 20000) ; manipulate files on the path (stop-watch)) ; stop the watch
+#_(spit "things/right-plate.scad"
+        (write-scad (plate-right c)))
+
+#_(spit "things/right-plate.scad"
+        (write-scad
+         (cut
+          (translate [0 0 -0.1]
+                     (difference (union case-walls
+                                        teensy-holder
+                                          ; rj9-holder
+                                        screw-insert-outers)
+                                 (translate [0 0 -10] screw-insert-screw-holes))))))
+
+#_(spit "things/left.scad"
+        (write-scad (mirror [-1 0 0] model-right)))
+
+#_(spit "things/right-test.scad"
+        (write-scad
+         (union
+          key-holes
+          connectors
+          thumb
+          thumb-connectors
+          case-walls
+          thumbcaps
+          caps
+          teensy-holder
+          rj9-holder
+          usb-holder-hole)))
+
+#_(spit "things/test.scad"
+        (write-scad
+         (difference usb-holder usb-holder-hole)))
+
+#_(defn -main [dum] 1)  ; dummy to make it easier to batc

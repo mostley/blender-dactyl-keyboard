@@ -17,11 +17,9 @@
             [lein-ring "0.12.5"]
             [cider/cider-nrepl "0.24.0"]
             [lein-cljfmt "0.7.0"]]
-  :aliases {"generate-lightcycle" ["exec" "-p" "src/dactyl_keyboard/lightcycle.clj"]
-            "generate-manuform" ["exec" "-p" "src/dactyl_keyboard/manuform.clj"]
+  :aliases {"generate-manuform" ["exec" "-p" "src/dactyl_keyboard/manuform.clj"]
             "runner" ["exec" "-p" "src/dactyl_keyboard/runner.clj"]}
-  :ring {:handler dactyl-keyboard.handler/app
-         :port 3030
-         :auto-reload? true}
+  :auto {:default
+         {:file-pattern #"\.(clj|cljs|cljx|cljc|json)$"}}
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [ring/ring-mock "0.3.2"]]}})

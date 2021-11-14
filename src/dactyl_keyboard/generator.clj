@@ -2,13 +2,7 @@
   (:refer-clojure :exclude [use import])
   (:require [scad-clj.scad :refer :all]
             [scad-clj.model :refer :all]
-            [dactyl-keyboard.manuform :as dm]
-            [dactyl-keyboard.lightcycle :as dl]))
-
-(defn generate-case-dl [confs is-right?]
-  (write-scad (if is-right?
-                (dl/dactyl-top-right confs)
-                (dl/dactyl-top-left confs))))
+            [dactyl-keyboard.manuform :as dm]))
 
 (defn generate-json-dm [confs is-right?]
   (let [stagger-index  (get confs :configuration-stagger-index [0 0 0])
@@ -70,40 +64,7 @@
                  :wire-post        (get confs :configuration-use-wire-post?)
                  :screw-inserts    (get confs :configuration-use-screw-inserts?)}
      :misc      {:keycaps    (get confs :configuration-show-caps?)
-                 :right-side is-right? }}))
-
-(defn generate-json-dl [confs is-right?]
-  {:keys      {:columns         (get confs :configuration-ncols)
-               :num-row         (get confs :configuration-use-numrow?)
-               :last-row        (get confs :configuration-use-lastrow?)
-               :switch-type     (get confs :configuration-switch-type)
-               :thumb-count     (get confs :configuration-thumb-count)
-               :hide-last-pinky (get confs :configuration-hide-last-pinky?)}
-   :curve     {:alpha         (get confs :configuration-alpha)
-               :beta          (get confs :configuration-beta)
-               :tenting       (get confs :configuration-tenting-angle)
-               :thumb-alpha   (get confs :configuration-thumb-alpha)
-               :thumb-beta    (get confs :configuration-thumb-beta)
-               :thumb-tenting (get confs :configuration-thumb-tenting-angle)}
-   :connector {:external (get confs :configuration-use-external-holder?)}
-   :form      {:hotswap         (get confs :configuration-use-hotswap?)
-               :thumb-offset-x  (get confs :configuration-thumb-offset-x)
-               :thumb-offset-y  (get confs :configuration-thumb-offset-y)
-               :thumb-offset-z  (get confs :configuration-thumb-offset-z)
-               :wide-pinky      (get confs :configuration-use-wide-pinky?)
-               :z-offset        (get confs :configuration-z-offset)
-               :web-thickness   (get confs :configuration-web-thickness)
-               :wall-thickness  (get confs :configuration-wall-thickness)
-               :manuform-offset (get confs :configuration-manuform-offset?)
-               :border          (get confs :configuration-use-border?)
-               :thick-wall      (get confs :configuration-thick-wall?)}
-   :misc      {:right-side    is-right?
-               :screw-inserts (get confs :configuration-use-screw-inserts?)}})
-
-(defn generate-plate-dl [confs is-right?]
-  (write-scad (if is-right?
-                (dl/dactyl-plate-right confs)
-                (dl/dactyl-plate-left confs))))
+                 :right-side is-right?}}))
 
 (defn generate-case-dm [confs is-right?]
   (write-scad (if is-right?

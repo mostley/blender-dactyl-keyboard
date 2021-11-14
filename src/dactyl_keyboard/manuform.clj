@@ -5,21 +5,6 @@
             [dactyl-keyboard.util :refer :all]
             [dactyl-keyboard.common :refer :all]))
 
-(def column-style :standard)
-
-; controls overall height; original=9 with centercol=3; use 16 for centercol=2
-;(def keyboard-z-offset 4)
-
-;; settings for column-style == :fixed 
-;; the defaults roughly match maltron settings
-;;   http://patentimages.storage.googleapis.com/ep0219944a2/imgf0002.png
-;; fixed-z overrides the z portion of the column ofsets above.
-;; note: this doesn't work quite like i'd hoped.
-(def fixed-angles [(deg2rad 10) (deg2rad 10) 0 0 0 (deg2rad -15) (deg2rad -15)])
-(def fixed-x [-41.5 -22.5 0 20.3 41.4 65.5 89.6])  ; relative to the middle finger
-(def fixed-z [12.1    8.3 0  5   10.7 14.5 17.5])
-(def fixed-tenting (deg2rad 0))
-
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; general variables ;;
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -124,11 +109,13 @@
                    (->> (single-plate c)
                         (key-inner-place c -1 row))))))
 
-(defn finger-point [point]
-  (->> (sphere 10)
-       (translate point)
-       (translate [0 0 5])
-       (with-fn 64)))
+(defn finger-point [c point]
+  (let [height-offset               (get c :height-offset)]
+    (->> (sphere 10)
+         (translate point)
+         (translate [0 0 5])
+         (translate [0 0 height-offset])
+         (with-fn 64))))
 
 (defn finger-points [c]
   (let [fingers               [:Thumb, :Index, :Middle, :Ring, :Pinky]
@@ -137,7 +124,7 @@
     (apply
      union
      (for [finger fingers]
-       (finger-point (get finger-points finger))))))
+       (finger-point c (get finger-points finger))))))
 
 (defn caps [c]
   (let [inner               (get c :configuration-inner-column)
@@ -258,7 +245,7 @@
              row    (range 0 lastrow)
              :when  (case last-row-count
                       :zero (not= row cornerrow)
-                      :two (or (not= row cornerrow))
+                      :two (not= row cornerrow)
                       :full (not (and (= row cornerrow)
                                       (.contains [-1 0 1] column))))]
          (triangle-hulls
@@ -278,7 +265,7 @@
                                           (.contains [-1 0 1] column))
                                      (and (= row cornerrow)
                                           (.contains [-1 0 1] column))))
-                      (or (not= row cornerrow)))]
+                      (not= row cornerrow))]
          (triangle-hulls
           (key-place c column row (web-post-br web-thickness))
           (key-place c column (inc row) (web-post-tr web-thickness))
@@ -329,7 +316,7 @@
         is-mini?        (or (= thumb-count :five)
                             (= thumb-count :three-mini))
         x-rotation      (thumb-tenting c 10 :configuration-thumb-top-left-tenting-x)
-        y-rotation      (thumb-tenting c -23 :configuration-thumb-top-left-tenting-y)
+        y-rotation      (thumb-tenting c -35 :configuration-thumb-top-left-tenting-y)
         z-rotation      (thumb-tenting c
                                        (case thumb-count :three 20 :five 25 :three-mini 25 10)
                                        :configuration-thumb-top-left-tenting-z)
@@ -354,7 +341,7 @@
         is-mini?        (or (= thumb-count :five)
                             (= thumb-count :three-mini))
         x-rotation      (thumb-tenting c (if is-mini? 14 10) :configuration-thumb-top-right-tenting-x)
-        y-rotation      (thumb-tenting c (if is-mini? -15 -23) :configuration-thumb-top-right-tenting-y)
+        y-rotation      (thumb-tenting c (if is-mini? -15 -35) :configuration-thumb-top-right-tenting-y)
         z-rotation      (thumb-tenting c 10 :configuration-thumb-top-right-tenting-z)
         custom-offsets? (get c :configuration-custom-thumb-cluster?)
         default-x       (if is-mini? -15 -12)
@@ -1559,7 +1546,6 @@
 (def wire-post-height 7)
 (def wire-post-overhang 3.5)
 (def wire-post-diameter 2.6)
-(def usb-holder-offset [-22 5 0])
 (defn wire-post [c direction offset]
   (->> (union (translate [0 (* wire-post-diameter -0.5 direction) 0]
                          (cube wire-post-diameter wire-post-diameter wire-post-height))
@@ -1651,88 +1637,3 @@
 (defn plate-left [c]
   (mirror [-1 0 0] (plate-right c)))
 
-(def c {:configuration-nrows                    4
-        :configuration-ncols                    5
-        :configuration-thumb-count              :six
-        :configuration-last-row-count           :zero
-        :configuration-switch-type              :box
-        :configuration-inner-column             :normie
-        :configuration-hide-last-pinky?         false
-
-        :configuration-alpha                    (/ pi 10)
-        :configuration-pinky-alpha              (/ pi 10)
-        :configuration-beta                     (/ pi 36)
-        :configuration-centercol                4
-        :configuration-tenting-angle            (/ pi 12)
-        :configuration-rotate-x-angle           (/ pi 180)
-
-        :configuration-use-promicro-usb-hole?   false
-        :configuration-connector-type           :rj9
-        :configuration-use-external-holder?     false
-
-        :configuration-use-hotswap?             false
-        :configuration-thumb-cluster-offset-x   6
-        :configuration-thumb-cluster-offset-y   -3
-        :configuration-thumb-cluster-offset-z   7
-        :configuration-custom-thumb-tenting?    false
-        :configuration-custom-thumb-tenting-x   (/ pi 0.5)
-        :configuration-custom-thumb-tenting-y   (/ pi 0.5)
-        :configuration-custom-thumb-tenting-z   (/ pi 0.5)
-        :configuration-custom-thumb-offsets?    false
-        :configuration-thumb-top-right-offset-x -12
-        :configuration-thumb-top-right-offset-y -16
-        :configuration-thumb-top-right-offset-z 3
-        :configuration-stagger?                 true
-        :configuration-stagger-index            [0 0 0]
-        :configuration-stagger-middle           [0 2.8 -6.5]
-        :configuration-stagger-ring             [0 0 0]
-        :configuration-stagger-pinky            [0 -13 6]
-        :configuration-use-wide-pinky?          false
-        :configuration-z-offset                 6
-        :configuration-web-thickness            7
-        :configuration-wall-thickness           3
-        :configuration-use-wire-post?           false
-        :configuration-use-screw-inserts?       false
-        :configuration-column-offset            0.0
-
-        :configuration-show-caps?               false
-        :configuration-plate-projection?        false})
-
-#_(spit "things/right.scad"
-        (write-scad (model-right c)))
-
-#_(spit "things/right-plate.scad"
-        (write-scad (plate-right c)))
-
-#_(spit "things/right-plate.scad"
-        (write-scad
-         (cut
-          (translate [0 0 -0.1]
-                     (difference (union case-walls
-                                        teensy-holder
-                                          ; rj9-holder
-                                        screw-insert-outers)
-                                 (translate [0 0 -10] screw-insert-screw-holes))))))
-
-#_(spit "things/left.scad"
-        (write-scad (mirror [-1 0 0] model-right)))
-
-#_(spit "things/right-test.scad"
-        (write-scad
-         (union
-          key-holes
-          connectors
-          thumb
-          thumb-connectors
-          case-walls
-          thumbcaps
-          caps
-          teensy-holder
-          rj9-holder
-          usb-holder-hole)))
-
-#_(spit "things/test.scad"
-        (write-scad
-         (difference usb-holder usb-holder-hole)))
-
-#_(defn -main [dum] 1)  ; dummy to make it easier to batc
